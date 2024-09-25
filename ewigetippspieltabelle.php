@@ -80,9 +80,9 @@ $aktuelle_saison_einbinden = 0;  // 0=nein, 1=ja
 
 // Was Soll bei der Auswertung angezeigt werden?  1 = anzeigen; 0 nicht anzeigen
 $show_sp_ges  = 1;  // Anzahl Spiele getippt
-$show_sp_proz = 1;  // Quote richtiger tipps - oder punkte pro spiel
+$show_sp_proz = 1;  // Quote richtiger Tipps - oder Punkte pro spiel
 $show_joker   = 1;  // Jokerpunkte
-$show_punkte  = 1;  // Anzahl punkte -> hier ist die 1 empfohlen
+$show_punkte  = 1;  // Anzahl Punkte -> hier ist die 1 empfohlen
 $show_team    = 1;  // Teamnamen anzeigen
 
 // Zeichen im Tabellenkopf bei der Ausgabe einstellen - Variablen anpassen
@@ -126,7 +126,7 @@ while($file = readdir($tipparchiv)) {
   if($file != "." && $file != ".." && $file != "index.htm") {
     // Prüfen ob die Archivdatei richtig benannt ist - Form gesamtXXYY.aus
     if((strlen($file) == 14) and (substr($file, 0, 6) == "gesamt") and (substr($file, 10, 4) == ".aus")) {
-      array_push($gesamtfiles, $file);
+      Array_push($gesamtfiles, $file);
     }
   }
 }
@@ -140,7 +140,7 @@ if(sizeof($gesamtfiles) == 0) {
 array_multisort($gesamtfiles, SORT_ASC, SORT_STRING, $gesamtfiles);
 
 if(($aktuelle_saison_einbinden == 1) or ((isset($_GET['aktuell'])) and (filter_var($_GET['aktuell'], FILTER_VALIDATE_INT) === 1))) {
-  array_push($gesamtfiles, PATH_TO_ADDONDIR . "/tipp/tipps/auswert/gesamt.aus");
+  Array_push($gesamtfiles, PATH_TO_ADDONDIR . "/tipp/tipps/auswert/gesamt.aus");
   $aktuelle_saison_einbinden = 1;  // Falls der Parameter genutzt wird
 }
 
@@ -170,8 +170,8 @@ for($s = 0; $s < count($gesamtfiles); $s ++) {
   $ligenkurz = array();  // Beinhaltet Kürzel für Ligen
   $anzgetipptkurz = array();  // Beinhaltet Kürzel für Anzahl getippter Spiele
   for($i=1; $i<=$anzligen; $i++) {
-    array_push($ligenkurz, 'TP'.$i);      //-- ligenkürzel = 'TP'.$i
-    array_push($anzgetipptkurz, 'SG'.$i);  //-- kürzel = 'SG'.$i
+    Array_push($ligenkurz, 'TP'.$i);      //-- ligenkürzel = 'TP'.$i
+    Array_push($anzgetipptkurz, 'SG'.$i);  //-- kürzel = 'SG'.$i
   }
 
   $anztipper=0;
@@ -218,7 +218,7 @@ for($s = 0; $s < count($gesamtfiles); $s ++) {
   // echo ($tipper);
 
   //array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_DESC, SORT_NUMERIC, $tipper, SORT_DESC, SORT_STRING);
-  array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $tipper, SORT_ASC, SORT_STRING);
+  Array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $tipper, SORT_ASC, SORT_STRING);
 
   for($i=0; $i<count($tipper); $i++) {
     $name=$tipper[$i];
@@ -271,16 +271,16 @@ foreach($punkte as $name => $anzpunkte) {
 
 $sort = strip_tags($_GET['sort']);
 switch ($sort) {
-  case "nameauf": array_multisort($tipper, SORT_ASC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "nameab": array_multisort($tipper, SORT_DESC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "punkteauf": array_multisort($punkte, SORT_ASC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "punkteab": array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "quoteauf": array_multisort($quote, SORT_ASC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "quoteab": array_multisort($quote, SORT_DESC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "spieleauf": array_multisort($spiele, SORT_ASC, SORT_NUMERIC, $punkte, SORT_DESC, SORT_NUMERIC, $punkte); break;
-  case "spieleab": array_multisort($spiele, SORT_DESC, SORT_NUMERIC, $punkte, SORT_DESC, SORT_NUMERIC, $punkte); break;
+  case "nameauf": Array_multisort($tipper, SORT_ASC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
+  case "nameab": Array_multisort($tipper, SORT_DESC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
+  case "punkteauf": Array_multisort($punkte, SORT_ASC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
+  case "punkteab": Array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
+  case "quoteauf": Array_multisort($quote, SORT_ASC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
+  case "quoteab": Array_multisort($quote, SORT_DESC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
+  case "spieleauf": Array_multisort($spiele, SORT_ASC, SORT_NUMERIC, $punkte, SORT_DESC, SORT_NUMERIC, $punkte); break;
+  case "spieleab": Array_multisort($spiele, SORT_DESC, SORT_NUMERIC, $punkte, SORT_DESC, SORT_NUMERIC, $punkte); break;
   //case "punkteab": echo break;
-  default : array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
+  default : Array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
 }
 unset($tipper);
 unset($quote);
@@ -344,8 +344,8 @@ foreach($punkte as $name => $anzpunkte) {
   if(($shownichttipper != 0) or ($spiele[$name] != 0)) {
 
     // Ausgabe der Platzierung wenn:
-    //  1. Punkte ungleich dem Vorgänger
-    //  2. Punkte gleich, aber Anzahl getippter Spiele unterschiedlich
+    // 1. Punkte ungleich dem Vorgänger
+    // 2. Punkte gleich, aber Anzahl getippter Spiele unterschiedlich
     if(($punkte[$name] != $pkttmp) or (($punkte[$name] == $pkttmp) and (($spiele[$name] != $sptmp)))) {
 
       $platz2++;
@@ -358,7 +358,7 @@ foreach($punkte as $name => $anzpunkte) {
       }  // switch end
 
     }
-    else { // wenn Gleichheit bei Punkten und Spielen besteht
+    else {  // wenn Gleichheit bei Punkten und Spielen besteht
 
       switch ($platz2) {
         case 1 : $ausgabe .= '<tr class="colorplatz1 '; break;

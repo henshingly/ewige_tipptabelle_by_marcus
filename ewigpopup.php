@@ -35,7 +35,7 @@ while ($file = readdir($tipparchiv)) {
   if ($file != "." && $file != ".." && $file != "index.htm") {
     // Prüfen ob die Datei richtig benannt ist - form gesamtXXYY.aus
     if ((strlen($file) == 14) and (substr($file, 0, 6) == "gesamt") and (substr($file, 10, 4) == ".aus")) {
-      array_push($gesamtfiles, $file);
+      Array_push($gesamtfiles, $file);
     }
   }
 }
@@ -69,8 +69,8 @@ for ($s=0; $s<count($gesamtfiles); $s++) {
   $ligenkurz = array();                    // Beinhaltet Kürzel für Ligen
   $anzgetipptkurz = array();               // Beinhaltet Kürzel für Anzahl getippter Spiele
   for ($i=1; $i<=$anzligen; $i++) {
-    array_push($ligenkurz, 'TP'.$i);       // -- Ligenkürzel = 'TP'.$i
-    array_push($anzgetipptkurz, 'SG'.$i);  // -- Kürzel = 'SG'.$i
+    Array_push($ligenkurz, 'TP'.$i);       // -- Ligenkürzel = 'TP'.$i
+    Array_push($anzgetipptkurz, 'SG'.$i);  // -- Kürzel = 'SG'.$i
   }
 
 
@@ -90,7 +90,7 @@ for ($s=0; $s<count($gesamtfiles); $s++) {
   }  //for - Anzahl Tipper ermitteln end
 
   //array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_DESC, SORT_NUMERIC, $tipper, SORT_DESC, SORT_STRING);
-  array_multisort($tipperklein, SORT_ASC, SORT_STRING, $tipper, SORT_ASC, SORT_STRING);
+  Array_multisort($tipperklein, SORT_ASC, SORT_STRING, $tipper, SORT_ASC, SORT_STRING);
 
 
 }  // for Gesamtarray mit allen Daten bilden end

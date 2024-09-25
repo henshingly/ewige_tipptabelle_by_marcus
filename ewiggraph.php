@@ -27,7 +27,7 @@ require(dirname(__FILE__)."/init.php");
   die("Sorry, aber der Zugang ist nur für eingeloggte User möglich!");
 }*/
 
-//$zeit1 = microtime(); //zeit nehmen start
+//$zeit1 = microtime();  //zeit nehmen start
 
 
 if (!defined('PATH_TO_TIPPARCHIV'))   define('PATH_TO_TIPPARCHIV',    PATH_TO_ADDONDIR . "/tipp/archiv/");
@@ -44,7 +44,7 @@ while ($file = readdir($tipparchiv)) {
   if ($file != "." && $file != ".." && $file != "index.htm") {
     // Prüfen ob die Datei richtig benannt ist - form gesamtXXYY.aus
     if ((strlen($file) == 14) and (substr($file, 0, 6) == "gesamt") and (substr($file, 10, 4) == ".aus")) {
-      array_push($gesamtfiles, $file);
+      Array_push($gesamtfiles, $file);
     }
   }
 }
@@ -77,8 +77,8 @@ for ($s = 0; $s < count($gesamtfiles); $s ++) {
   $ligenkurz = array();                    // Beinhaltet Kürzel für Ligen
   $anzgetipptkurz = array();               // Beinhaltet Kürzel für Anzahl getippter Spiele
   for ($i=1; $i<=$anzligen; $i++) {
-    array_push($ligenkurz, 'TP'.$i);       //-- ligenkürzel = 'TP'.$i
-    array_push($anzgetipptkurz, 'SG'.$i);  //-- kürzel = 'SG'.$i
+    Array_push($ligenkurz, 'TP'.$i);       //-- ligenkürzel = 'TP'.$i
+    Array_push($anzgetipptkurz, 'SG'.$i);  //-- kürzel = 'SG'.$i
   }
 
   $anztipper=0;
@@ -107,7 +107,7 @@ for ($s = 0; $s < count($gesamtfiles); $s ++) {
 
     // foreach2 ermittelt die Anzahl an getippten Spielen
     foreach ($anzgetipptkurz as $value) {
-      $value = $value."="; // = muss stehen da bei TP1 auch TP10 TP11 erfasst
+      $value = $value."=";  // = muss stehen da bei TP1 auch TP10 TP11 erfasst
       $pos1 = strpos($array[$i], $value);
       if ($pos1 !== false) {
         // Anzahl getippter Spiele gleich Array dazu addieren
@@ -119,7 +119,7 @@ for ($s = 0; $s < count($gesamtfiles); $s ++) {
 
 
   //array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_DESC, SORT_NUMERIC, $tipper, SORT_DESC, SORT_STRING);
-  array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $tipper, SORT_ASC, SORT_STRING);
+  Array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $tipper, SORT_ASC, SORT_STRING);
 
   $saison = substr($gesamtfiles[$s], 6, 4);
   $platz1[$saison] = 0;
@@ -145,7 +145,7 @@ unset($spiele);
 $pgst = sizeof($saisons);
 
 // Y-achse max Wert - aufgerundet
-$pgteams = $punkte_max = ceil($punkte_max/100); // ceil — Rundet Brüche auf
+$pgteams = $punkte_max = ceil($punkte_max/100);  // ceil — Rundet Brüche auf
 
 
 // Gesamt Array ist nun mit alles Saisons gefüllt
@@ -276,8 +276,8 @@ $pgtext2="PUNKTE";  // $text[136];
 
 
 
-//$pgteam1 = isset($_GET['tipper1']) ? strip_tags($_GET['tipper1']) : $name1;//$_GET['tipper1'];//$name1;//"[Marcus]";
-//$pgteam2 = isset($_GET['tipper2']) ? strip_tags($_GET['tipper2']) : $name2;//$name2;//"[mountainking]";
+//$pgteam1 = isset($_GET['tipper1']) ? strip_tags($_GET['tipper1']) : $name1;  // $_GET['tipper1'];  // $name1;  // "[Marcus]";
+//$pgteam2 = isset($_GET['tipper2']) ? strip_tags($_GET['tipper2']) : $name2;  // $name2;  // "[mountainking]";
 
 //$pgplatz1=isset($_GET['pgplatz1'])?$_GET['pgplatz1']:1;
 //$pgplatz1="5.3,0.01,7,8,9,2";
@@ -425,12 +425,12 @@ for($i = 1; $i <= $pgteams; $i++) {
 
 imagestring($image, 3, 3, 1, rawurldecode(stripslashes($pgteam1_tmp)), $farbe_c);  //Mannschaftsname1
 if ($pganz == 2) {
-  imagestring($image, 3, $breit-imagefontwidth(3) * strlen(stripslashes($pgteam2_tmp))-2, 1, rawurldecode(stripslashes($pgteam2_tmp)), $farbe_d); //Mannschaftsname2
+  imagestring($image, 3, $breit-imagefontwidth(3) * strlen(stripslashes($pgteam2_tmp))-2, 1, rawurldecode(stripslashes($pgteam2_tmp)), $farbe_d);  //Mannschaftsname2
 }
 
 
 //$pgplatz1="3.25,0.01,7,11,9,11.2";
-//    imagestring($image, 1, 38, 40, $pgplatz1, $farbe_a); //links
+//   imagestring($image, 1, 38, 40, $pgplatz1, $farbe_a);  //links
 //$pgplatz2="0.01,10.3,9,8,3,6";
 $pgplatz3="2,7.6,4,3,7,1";
 
@@ -477,7 +477,7 @@ for($i = 1; $i < $pgst; $i++) {
     if ($lini2[$i] > 0 && $lini2[$i-1] > 0) {
       //imageline($image, 30-$lmo_faktorhorizontal/2+($i * $lmo_faktorhorizontal), 29-$lmo_faktorvertikal/2+($lini2[$i-1] * $lmo_faktorvertikal), 30-$lmo_faktorhorizontal/2+(($i+1) * $lmo_faktorhorizontal), 29-$lmo_faktorvertikal/2+($lini2[$i] * $lmo_faktorvertikal), $farbe_d);
 
-//imagestring($image, 1, 38, 40, $y_min, $farbe_a); //links
+//imagestring($image, 1, 38, 40, $y_min, $farbe_a);  //links
 
       imageline($image,
         30-$lmo_faktorhorizontal/2+($i * $lmo_faktorhorizontal),
