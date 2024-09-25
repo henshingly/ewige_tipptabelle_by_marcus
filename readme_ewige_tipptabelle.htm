@@ -7,255 +7,218 @@ Ewige Tippspieltabelle
 <html>
 
 <head>
-	<title>Ewige Tippspieltabelle</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<meta name="description" content="Ewige Tippspieltabelle">
-	<meta name="author" content="Marcus Konschak">
-	<meta name="copyright" content="Marcus Konschak - www.bcerlbach.de">
-	<meta name="language" content="de">
-	
-	<style type="text/css">
-		html {
-			/* erzwingt den vertikalen Scrollbalken */
-			height: 100%; margin-bottom: 1px;
-		}
+  <title>Ewige Tippspieltabelle</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Ewige Tippspieltabelle">
+  <meta name="author" content="Marcus Konschak">
+  <meta name="copyright" content="Marcus Konschak - www.bcerlbach.de">
+  <meta name="language" content="de">
 
-		body {
-			font-size: 0.8em;  
-			font-family: verdana, arial;
-			padding: 10px 0 15px 0;
-			margin: 5px;
-			text-align:center;
-			background-color: #b9c4cc;
-		}		
-		
-		div {
-			margin: 5px 10px 5px 10px;
-			padding: 15px 10px 10px 10px;
-			text-align: left;
-			background-color: #C7CFD6;
-			line-height: 150%;
-		}
-		
-		div.kapitel {
-			font-size: 1em;
-			font-weight: bold;
-			margin: 40px 10px 10px 10px;
-			padding: 5px 0 5px 10px;
-			background-color: #889CB0;
-			border-bottom: 1px dashed black;
-			-moz-border-radius-topleft: 0.6em;
-			-moz-border-radius-topright: 0.6em;
-		}
-		
-		div.headline {
-			font-size: 1.7em;
-			font-weight: bold;
-			text-align: center;
-			margin: 5px 10px 15px 10px;
-			background-color: #889cb0;
-			border-bottom: 1px dashed black;
-			-moz-border-radius-topleft: 0.6em;
-			-moz-border-radius-topright: 0.6em;
-		}
-		
-		div.nav {
-			text-align: center;
-			width: 500px;
-			margin: 0 auto;
-			background-color: #b9c4cc;
-		}
+  <style type="text/css">
+    html {
+      /* erzwingt den vertikalen Scrollbalken */
+      height: 100%; margin-bottom: 1px;
+    }
 
-		div.nav li
-		{
-			/* werden aus dem Flu� genommen, um die Links nebeneinander zu platzieren */
-			display: inline;
-		}
-		
-		ul.nav {
-			margin: 10px 0 10px 0;
-			padding: 0px;        
-			list-style-type: none;
-		}
-			
-		ul.nav li a {
-			display: block;
-			float: left;
-			padding: 5px 10px 5px 10px;
-			color: #000000;
-			background-color: #889cb0;
-			border: 1px solid #000000;
-			text-decoration: none;
-			-moz-border-radius-topleft: 0.6em;
-			-moz-border-radius-topright: 0.6em;
-		}
-		ul.nav li a:hover {
-			background-color: #b9c4cc;
-			color: #000000;
-			border: 1px solid #889cb0;
-		}
-		a.noborder {
-			border: 0;
-		}
-		a {
-			color: #000000;
-		}
-		a:hover {
-			background-color: #889cb0;
-			color: #ffffff;
-			text-decoration: none;
-		}
-		div.footer
-		{
-			padding: 10px 5px 2px 0;
-			font-size: 8pt;
-			text-align:right;			
-			background-color: #b9c4cc;
-		}
-		div.code {
-			background-color: #b9c4cc;
-			padding: 10px;
-			font-size: 8pt;
-			border: 1px dashed #889cb0;
-			display:compact;
-		}	
-		pre {
-			font-size: 1.1em;			
-		}
-		
-	</style>
-	
+    body {
+      font-size: 0.8em;
+      font-family: verdana, arial;
+      padding: 10px 0 15px 0;
+      margin: 5px;
+      text-align:center;
+      background-color: #b9c4cc;
+    }
+
+    div {
+      margin: 5px 10px 5px 10px;
+      padding: 15px 10px 10px 10px;
+      text-align: left;
+      background-color: #C7CFD6;
+      line-height: 150%;
+    }
+
+    div.kapitel {
+      font-size: 1em;
+      font-weight: bold;
+      margin: 40px 10px 10px 10px;
+      padding: 5px 0 5px 10px;
+      background-color: #889CB0;
+      border-bottom: 1px dashed black;
+      -moz-border-radius-topleft: 0.6em;
+      -moz-border-radius-topright: 0.6em;
+    }
+
+    div.headline {
+      font-size: 1.7em;
+      font-weight: bold;
+      text-align: center;
+      margin: 5px 10px 15px 10px;
+      background-color: #889cb0;
+      border-bottom: 1px dashed black;
+      -moz-border-radius-topleft: 0.6em;
+      -moz-border-radius-topright: 0.6em;
+    }
+
+    div.nav {
+      text-align: center;
+      width: 500px;
+      margin: 0 auto;
+      background-color: #b9c4cc;
+    }
+
+    div.nav li
+    {
+      /* werden aus dem Fluß genommen, um die Links nebeneinander zu platzieren */
+      display: inline;
+    }
+
+    ul.nav {
+      margin: 10px 0 10px 0;
+      padding: 0px;
+      list-style-type: none;
+    }
+
+    ul.nav li a {
+      display: block;
+      float: left;
+      padding: 5px 10px 5px 10px;
+      color: #000000;
+      background-color: #889cb0;
+      border: 1px solid #000000;
+      text-decoration: none;
+      -moz-border-radius-topleft: 0.6em;
+      -moz-border-radius-topright: 0.6em;
+    }
+    ul.nav li a:hover {
+      background-color: #b9c4cc;
+      color: #000000;
+      border: 1px solid #889cb0;
+    }
+    a.noborder {
+      border: 0;
+    }
+    a {
+      color: #000000;
+    }
+    a:hover {
+      background-color: #889cb0;
+      color: #ffffff;
+      text-decoration: none;
+    }
+    div.footer
+    {
+      padding: 10px 5px 2px 0;
+      font-size: 8pt;
+      text-align:right;
+      background-color: #b9c4cc;
+    }
+    div.code {
+      background-color: #b9c4cc;
+      padding: 10px;
+      font-size: 8pt;
+      border: 1px dashed #889cb0;
+      display:compact;
+    }
+    pre {
+      font-size: 1.1em;
+    }
+  </style>
 </head>
-
 <body>
-
-
 <div class="headline">AddOn - Ewige Tippspieltabelle</div>
 
 <div class="nav">
-	<ul class="nav">
-		<li><a href="#p1">Informationen</a></li>
-        <li><a href="#p2">�nderungen</a></li>
-        <li><a href="#p3">Einstellm�glichkeiten</a></li>
-		<li><a href="#p4">MOD-History</a></li>
+  <ul class="nav">
+    <li><a href="#p1">Informationen</a></li>
+        <li><a href="#p2">Änderungen</a></li>
+        <li><a href="#p3">Einstellmöglichkeiten</a></li>
+    <li><a href="#p4">MOD-History</a></li>
   </ul>
 </div>
-
 
 <div class="kapitel"><a name="p1"></a>Informationen</div>
 
 <div>
-  <p><strong>AddOn Titel:</strong> Ewige Tippspieltabelle 
-    <br>
-    <br>
-    <strong>Author</strong>: Marcus < info@bcerlbach.de >  <a href="http://www.bcerlbach.de/" target="_blank">http://www.bcerlbach.de</a><br>
-  <br>
-    <strong>Version:</strong> 1.2 (Stand Februar 2010)<br>
-  <br>
-    <strong>Vorraussetzung</strong> ist funktionierender LMO mit eingerichtetem Tippspiel
-    <br>
-    <br>
-    Hier gibt es eine <a href="http://bcerlbach.de/lmo4/ewigetippspieltabelle.php" target="_blank" title="zur Demo">Demo</a>.<br>
-    <br>
-    <strong>Download</strong> unter: <a href="http://forum.bcerlbach.de/downloads.php?cat=7" target="_blank">http://forum.bcerlbach.de/downloads.php?cat=7</a>  <br>
-    <br>
-    <strong>Support</strong> im LMO-Forum unter: <a href="http://www.liga-manager-online.de/lmo-forum/viewtopic.php?f=18&t=10807" target="_blank">http://www.liga-manager-online.de/lmo-forum/viewtopic.php?f=18&amp;t=10807</a><br>
-    <br>
-    <strong>Hinweis:</strong> Das Skript kann beliebig ver&auml;ndert werden, aber der Copyright-Hinweis am Ende der Seite mu&szlig; erhalten bleiben!<br>
-<br>
-    Installation Level: Easy 
-    <br>
-    Installation Time:  < 5 Minuten<br>
-    Files To Edit: -
-    <br>
-    <br>
-    Included Files: ewigetippspieltabelle.php 
-    <br>
-    <br>
-    This MOD is released under the GPL License. 
-    <br>
-    
-    Da die Datei gesamt.aus nur gelesen wird ist ein Backup eigentlich nicht n�tig... 
-  <br>
-    <br>
-    <strong>Info:</strong> Wer immer �ber Updates informiert werden will, der sollte sich im Forum registrieren. Denn dann hat man die M�glichkeit einen Download zu abonieren. D.h. wenn etwas daran ge�ndert wurde, so wird umgehend eine E-Mail verschickt.</p>
+  <strong>AddOn Titel:</strong> Ewige Tippspieltabelle<br><br>
+  <strong>Author</strong>: Marcus < info@bcerlbach.de >  <a href="http://www.bcerlbach.de/" target="_blank">http://www.bcerlbach.de</a><br><br>
+  <strong>Version:</strong> 1.2 (Stand Februar 2010)<br><br>
+  <strong>Vorraussetzung</strong> ist funktionierender LMO mit eingerichtetem Tippspiel<br><br>
+  Hier gibt es eine <a href="http://bcerlbach.de/lmo4/ewigetippspieltabelle.php" target="_blank" title="zur Demo">Demo</a>.<br><br>
+  <strong>Download</strong> unter: <a href="http://forum.bcerlbach.de/downloads.php?cat=7" target="_blank">http://forum.bcerlbach.de/downloads.php?cat=7</a>  <br><br>
+  <strong>Support</strong> im LMO-Forum unter: <a href="http://www.liga-manager-online.de/lmo-forum/viewtopic.php?f=18&t=10807" target="_blank">http://www.liga-manager-online.de/lmo-forum/viewtopic.php?f=18&amp;t=10807</a><br><br>
+  <strong>Hinweis:</strong> Das Skript kann beliebig verändert werden, aber der Copyright-Hinweis am Ende der Seite muß erhalten bleiben!<br><br>
+
+  <strong>Installation Level:</strong> Easy<br>
+  <strong>Installation Time:</strong>  < 5 Minuten<br><br>
+  <strong>Files To Edit:</strong> keine<br><br>
+  <strong>Included Files:</strong><br>ewigetippspieltabelle.php<br>ewiggraph.php<br>ewigpopup.php<br><br>
+  This MOD is released under the GPL License.<br>
+
+  Da die Datei gesamt.aus nur gelesen wird ist ein Backup eigentlich nicht nötig...<br><br>
+  <strong>Info:</strong> Wer immer über Updates informiert werden will, der sollte sich im Forum registrieren. Denn dann hat man die Möglichkeit einen Download zu abonieren. D.h. wenn etwas daran geändert wurde, so wird umgehend eine E-Mail verschickt.</p>
 </div>
 
 
-<div class="kapitel"><a name="p2"></a>&Auml;nderungen</div>
+<div class="kapitel"><a name="p2"></a>Änderungen</div>
 
-<div>Folgende &Auml;nderungen sind durchzuf&uuml;hren:<br>
-  <br>
-  1.) Heruntergeladene Datei (ewige_tipptabelle.rar) entpacken<br>
-<br>
-2.) Dateien    auf Server kopieren<br>
-<div class="code">
-ewigetippspieltabelle.php    -> ins LMO-Root<br>
-ewiggraph.php    -> ins LMO-Root<br>
-ewigpopop
-    -> ins LMO-Root<br>
-<br>
- img/*.png -&gt; lmo/img/*.png</div>
-<br>
-3.)  Verzeichnis erstellen: <br>
-<div class="code">&quot;archiv&quot; in lmo/addon/tipp/ erstellen&nbsp;&nbsp;-&gt;&nbsp;&nbsp;lmo/addon/tipp/archiv</div>
-<br>
-Wichtiger Hinweis:
-In diesem neuen Ordner lmo/addon/tipp/archiv werden die archivierten Auswert-Dateien von nun an gespeichert.<br>
- Nach Ende einer Tipp-Saison sollte die Gesamtauswertungs-Datei (lmo/addon/tipp/tipps/auswert/gesamt.aus) in den neu erstellten Ordner kopiert und nach folgendem Schema umbenannt werden: gesamt.aus -> gesamtXXYY.aus
- - also z.B. gesamt0809.aus<br>
-Die Datei muss so benannt werden, da das Skript anhand der Saison XXYY die Sortierung vornimmt und auch Ausgaben darauf aufbauen. <br>
-Sollte eine Datei nicht entsprechend umbenannt wurden sein, so funktioniert die Auswertung dennoch, aber die entsprechende Datei wird nicht ber&uuml;cksichtigt.<br>
-<br>
-
+<div>Folgende Änderungen sind durchzuführen:<br><br>
+  1.) Heruntergeladene Datei (ewige_tipptabelle.rar) entpacken<br><br>
+  2.) Dateien auf den Server kopieren<br>
+  <div class="code">
+    ewigetippspieltabelle.php    -> ins LMO-Root<br>
+    ewiggraph.php    -> ins LMO-Root<br>
+    ewigpopup.php    -> ins LMO-Root<br><br>
+    img/*.png -&gt; lmo/img/*.png
+  </div><br>
+  3.)  Verzeichnis erstellen:<br>
+  <div class="code">"archiv" in lmo/addon/tipp/ erstellen&nbsp;&nbsp;-&gt;&nbsp;&nbsp;lmo/addon/tipp/archiv
+  </div><br>
+    Wichtiger Hinweis:<br>
+    In diesem neuen Ordner lmo/addon/tipp/archiv werden die archivierten Auswert-Dateien von nun an gespeichert.<br>
+    Nach Ende einer Tipp-Saison sollte die Gesamtauswertungs-Datei (lmo/addon/tipp/tipps/auswert/gesamt.aus) in den neu erstellten Ordner kopiert und nach folgendem Schema umbenannt werden: gesamt.aus -> gesamtXXYY.aus<br>
+    - also z.B. gesamt2324.aus für die Saison 2023/24.<br>
+    Die Datei muss so benannt werden, da das Skript anhand der Saison XXYY die Sortierung vornimmt und auch Ausgaben darauf aufbauen. <br>
+    Sollte eine Datei nicht entsprechend umbenannt wurden sein, so funktioniert die Auswertung dennoch, aber die entsprechende Datei wird nicht berücksichtigt.<br><br>
 </div>
 
-<div class="kapitel"><a name="p3"></a>Einstellm�glichkeiten</div>
-<div>Im Skript (ewigetippspieltabelle.php) k&ouml;nnen ab Zeile 31 bis 104 diverse Einstellungen vorgenommen werden.<br>
-  <br>Es kann u.a. eingestellt werden:<ul class="konfig">
-<li> Tippspieler, die noch keinen einzigen Tipp abgegeben haben, ausgeblendet werden k&ouml;nnen</li>
-<li>Begrenzung der Anzahl der anzuzeigenden Tipper</li>
-<li>Auswertung nur f&uuml;r eingeloggte Tippspieler sichtbar</li>
-<li>L&auml;nge der Tippspieler-Usernamen einstellbar</li>
-<li>Seitentitel</li>
-<li>Spalten&uuml;berschriften</li>
-<li>Farben (u.a. Platz 1-3) und Schriftgr&ouml;&szlig;en</li>
-<li>ob Sortierung m&ouml;glich ist</li>
+<div class="kapitel"><a name="p3"></a>Einstellmöglichkeiten</div>
+<div>Im Skript (ewigetippspieltabelle.php) können ab Zeile 29 bis 99 diverse Einstellungen vorgenommen werden.<br><br>
+  Es kann u.a. eingestellt werden:
+  <ul class="konfig">
+    <li>Tippspieler, die noch keinen einzigen Tipp abgegeben haben,können ausgeblendet werden </li>
+    <li>Begrenzung der Anzahl der anzuzeigenden Tipper</li>
+    <li>Auswertung nur für eingeloggte Tippspieler sichtbar</li>
+    <li>Länge der Tippspieler-Usernamen einstellbar</li>
+    <li>Seitentitel</li>
+    <li>Spaltenüberschriften</li>
+    <li>Farben (u.a. Platz 1-3) und Schriftgrößen</li>
+    <li>ob Sortierung möglich ist</li>
   </ul>
-Wem das nicht genug ist, der kann ab Zeile 471 direkt am CSS-Code &Auml;nderungen vornehmen.
-<br>
-<br>
-Das Ein- und Ausblenden, sowie die mouseover-Effekte werden durch  das Ajax-Framework <strong>JQuery</strong> realisiert.<br>
-Standardm&auml;&szlig;ig wird im Skript die JQuery-Datei vom Google-Server eingebunden. <br>
-Wer seine lokale JQuery-Datei einbinden m&ouml;chte muss die Zeile
-<br>
-<div class="code">&lt;script type=&quot;text/javascript&quot; src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js&quot;&gt;&lt;/script&gt;</div>
-durch z.B. folgende ersetzen:<br><div class="code">&lt;script type=&quot;text/javascript&quot; src=&quot;../js/jquery.min.js&quot;&gt;&lt;/script&gt;</div>
+  Wem das nicht genug ist, der kann ab Zeile 455 direkt am CSS-Code Änderungen vornehmen.<br><br>
+  Das Ein- und Ausblenden, sowie die mouseover-Effekte werden durch  das Ajax-Framework <strong>JQuery</strong> realisiert.<br>
+  Standardmäßig wird im Skript die JQuery-Datei vom Google-Server eingebunden.<br>
+  Wer seine lokale JQuery-Datei einbinden möchte muss die Zeile 574<br>
+  <div class="code">&lt;script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"&gt;&lt;/script&gt;</div>
+  durch z.B. folgende ersetzen:<br><div class="code">&lt;script type="text/javascript" src="../js/jquery.min.js"&gt;&lt;/script&gt;</div>
 </div>
-
-
 <div class="kapitel"><a name="p4"></a>MOD-History</div>
 <div>
   <pre>
-##   2010-02-17 - Version 1.2
-##   - Tippspielervergleich m�glich - es k�nnen 2 Tippspieler gegeneinander verglichen werden
-##   - die aktuelle Gesamtauswertung (gesamt.aus) kann in die Berechnung mit einbezogen werden
-##  
-##   2010-02-10 - Version 1.1
-##   - sortieren nach den einzelnen Spalten m�glich (kann auch deaktivert werden)
-##   - erzeugter Quellcode ist XHTML-konform
-##  
-##   2010-02-09 - Version 1.0
-##   - die 1. Version der Ewigen Tippspieltabelle erblickt das Licht der Welt</pre>
+    ##   2010-02-17 - Version 1.2
+    ##   - Tippspielervergleich möglich - es können 2 Tippspieler gegeneinander verglichen werden
+    ##   - die aktuelle Gesamtauswertung (gesamt.aus) kann in die Berechnung mit einbezogen werden
+    ##
+    ##   2010-02-10 - Version 1.1
+    ##   - sortieren nach den einzelnen Spalten möglich (kann auch deaktivert werden)
+    ##   - erzeugter Quellcode ist XHTML-konform
+    ##
+    ##   2010-02-09 - Version 1.0
+    ##   - die 1. Version der Ewigen Tippspieltabelle erblickt das Licht der Welt
+  </pre>
 </div>
-
-
 <div class="footer">
-Anleitung <span class="headline">f&uuml;r die &quot;Ewige Tippspieltabelle&quot;<br>
-</span> &copy; by Marcus - <a href="http://www.bcerlbach.de">BC Erlbach 1919</a></div>
-
-
-
+  Anleitung
+  <span class="headline">für die "Ewige Tippspieltabelle"<br></span> &copy; by Marcus - <a href="http://www.bcerlbach.de">BC Erlbach 1919</a>
+</div>
 </body>
-
 </html>
