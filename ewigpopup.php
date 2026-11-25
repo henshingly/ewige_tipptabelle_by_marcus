@@ -1,4 +1,4 @@
-<?
+<?php
 /** Liga Manager Online 4
   *
   * http://lmo.sourceforge.net/
@@ -19,78 +19,101 @@
 
 //ERROR_REPORTING(E_ALL);
 
-require(dirname(__FILE__)."/init.php");
+require(dirname(__FILE__) . '/init.php');
 
-if (!defined('PATH_TO_TIPPARCHIV'))   define('PATH_TO_TIPPARCHIV',    PATH_TO_ADDONDIR . "/tipp/archiv/");
-
-if (!is_dir(PATH_TO_TIPPARCHIV)) {
-  die("Pfad zum Tippspielarchiv " . PATH_TO_TIPPARCHIV . " nicht vorhanden!");
+if (!defined('PATH_TO_TIPPARCHIV')) {
+    define('PATH_TO_TIPPARCHIV', PATH_TO_ADDONDIR . '/tipp/archiv/');
 }
 
-$gesamtfiles = array();
+if (!is_dir(PATH_TO_TIPPARCHIV)) {
+    die('Pfad zum Tippspielarchiv ' . PATH_TO_TIPPARCHIV . ' nicht vorhanden!');
+}
 
-$tipparchiv = opendir (PATH_TO_TIPPARCHIV);
+$gesamtfiles = [];
 
-while ($file = readdir($tipparchiv)) {
-  if ($file != "." && $file != ".." && $file != "index.htm") {
-    // Prüfen ob die Datei richtig benannt ist - form gesamtXXYY.aus
-    if ((strlen($file) == 14) and (substr($file, 0, 6) == "gesamt") and (substr($file, 10, 4) == ".aus")) {
-      array_push($gesamtfiles, $file);
+$tipparchiv = opendir(PATH_TO_TIPPARCHIV);
+
+while (($file = readdir($tipparchiv)) !== false) {
+    if ($file != '.' && $file != '..' && $file != 'index.htm') {
+        // Prüfen ob die Datei richtig benannt ist - form gesamtXXYY.aus
+        if ((strlen($file) == 14) and (substr($file, 0, 6) == 'gesamt') and (substr($file, 10, 4) == '.aus')) {
+            array_push($gesamtfiles, $file);
+        }
     }
-  }
 }
 closedir($tipparchiv);
 
 if (sizeof($gesamtfiles) == 0) {
-  die("Keine Auswertungsfiles *.aus im Ordner " . PATH_TO_TIPPARCHIV . " vorhanden!");
+    die('Keine Auswertungsfiles *.aus im Ordner ' . PATH_TO_TIPPARCHIV . ' vorhanden!');
 }
 
 // Saisons nach Datum sortieren
 array_multisort($gesamtfiles, SORT_ASC, SORT_STRING, $gesamtfiles);
 
-$saisons = array();
+$saisons = [];
 $punkte_max = 0;
-$gesamt = $platz1 = $platz2 = array();
-$tipper = $tipperklein = array();
+$gesamt = $platz1 = $platz2 = [];
+$tipper = $tipperklein = [];
+$anztipper = 0;
+$saisonLabels = [];  // Beschriftung der Saisons (z. B. 23/24)
+$punkteSaison = [];  // je Saison: Name => Punkte
 
 // Gesamtarray mit allen Daten bilden
-for ($s=0; $s<count($gesamtfiles); $s++) {
+for ($s = 0; $s < count($gesamtfiles); $s++) {
 
-  // Datei gesamt.aus in Array einlesen... evtl. Pfad anpassen
-  $auswertdatei = PATH_TO_TIPPARCHIV . $gesamtfiles[$s];  // "gesamt2425.aus";
+    // Datei gesamt.aus in Array einlesen... evtl. Pfad anpassen
+    $auswertdatei = PATH_TO_TIPPARCHIV . $gesamtfiles[$s];  // "gesamt2425.aus";
 
-  $array = @file($auswertdatei);
-
-
-  // Anzahl der Tipp-Ligen ermitteln
-  $zeile = trim($array[1]);  // unnötige Zeilenumbrüche ... entfernen
-  $anzligen = (int)substr($zeile, 9, strlen($zeile));  // -> eigentlich immer ab der 10. Stelle
-
-  $ligenkurz = array();                    // Beinhaltet Kürzel für Ligen
-  $anzgetipptkurz = array();               // Beinhaltet Kürzel für Anzahl getippter Spiele
-  for ($i=1; $i<=$anzligen; $i++) {
-    array_push($ligenkurz, 'TP'.$i);       // -- Ligenkürzel = 'TP'.$i
-    array_push($anzgetipptkurz, 'SG'.$i);  // -- Kürzel = 'SG'.$i
-  }
+    $array = @file($auswertdatei);
+    if (!is_array($array)) {
+        continue;
+    }  // Datei nicht lesbar -> Saison überspringen
 
 
+    // Anzahl der Tipp-Ligen ermitteln
+    $zeile = trim($array[1] ?? '');  // unnötige Zeilenumbrüche ... entfernen
+    $anzligen = (int)substr($zeile, 9, strlen($zeile));  // -> eigentlich immer ab der 10. Stelle
 
+    $saisonLabels[] = substr($gesamtfiles[$s], 6, 2) . '/' . substr($gesamtfiles[$s], 8, 2);
+    $punkteSaison[] = [];
+    $sIdx = count($punkteSaison) - 1;
+    $aktName = '';
 
-  for ($i = $anzligen+3; $i < sizeof($array); $i++) {
-
-    // Usernamen ermitteln, wenn gefunden in Array speichern
-    $posname = strpos($array[$i], "[");
-    if ($posname !== false) {
-      // gefundenen Namen ins Array speichern - aber nur wenn der Name noch nicht enthalten ist
-      if (!in_array(trim($array[$i]), $tipper)) {
-        $tipper[++$anztipper] = trim($array[$i]);
-        $tipperklein[$anztipper] = strtolower(trim($array[$i]));
-      }
+    $ligenkurz = [];                    // Beinhaltet Kürzel für Ligen
+    $anzgetipptkurz = [];               // Beinhaltet Kürzel für Anzahl getippter Spiele
+    for ($i = 1; $i <= $anzligen; $i++) {
+        array_push($ligenkurz, 'TP'.$i);       // -- Ligenkürzel = 'TP'.$i
+        array_push($anzgetipptkurz, 'SG'.$i);  // -- Kürzel = 'SG'.$i
     }
-  }  //for - Anzahl Tipper ermitteln end
 
-  //array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_DESC, SORT_NUMERIC, $tipper, SORT_DESC, SORT_STRING);
-  array_multisort($tipperklein, SORT_ASC, SORT_STRING, $tipper, SORT_ASC, SORT_STRING);
+
+
+
+    for ($i = $anzligen + 3; $i < sizeof($array); $i++) {
+
+        // Usernamen ermitteln, wenn gefunden in Array speichern
+        $posname = strpos($array[$i], '[');
+        if ($posname !== false) {
+            $aktName = trim($array[$i]);
+            $punkteSaison[$sIdx][$aktName] = 0;  // Tipper war in dieser Saison dabei
+            // gefundenen Namen ins Array speichern - aber nur wenn der Name noch nicht enthalten ist
+            if (!in_array(trim($array[$i]), $tipper)) {
+                $tipper[++$anztipper] = trim($array[$i]);
+                $tipperklein[$anztipper] = strtolower(trim($array[$i]));
+            }
+        }
+        // erzielte Punkte (TP1=, TP2=, ...) dem aktuellen Tipper zuzählen
+        if ($aktName !== '') {
+            foreach ($ligenkurz as $value) {
+                if (strpos($array[$i], $value . '=') === 0) {
+                    $punkteSaison[$sIdx][$aktName] += (int)ltrim(strrchr($array[$i], '='), '=');
+                }
+            }
+        }
+    }  //for - Anzahl Tipper ermitteln end
+
+    //array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_DESC, SORT_NUMERIC, $tipper, SORT_DESC, SORT_STRING);
+    array_multisort($tipperklein, SORT_ASC, SORT_STRING, $tipper, SORT_ASC, SORT_STRING);
 
 
 }  // for Gesamtarray mit allen Daten bilden end
@@ -106,6 +129,7 @@ unset($spiele);
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Tippspielervergleich</title>
 <style type="text/css">
 body {
@@ -138,7 +162,7 @@ div#wrapper {
   -moz-border-radius: 0.4em; /* Ecken gerundet, FF only */
 }
 .divmitte {
-  float:left;
+  clear:both;
   text-align:center;
   /*width:197px;*/
   padding: 10px 5px 5px 5px;
@@ -148,7 +172,7 @@ div#wrapper {
 }
 
 .divrechts {
-  float:left;
+  float:right;
   text-align:center;
   /*width:197px;*/
   padding: 10px 5px 3px 5px;
@@ -173,42 +197,115 @@ div#wrapper {
 <?php
 
 if (isset($_POST['tipper1'])) {
-  $tipper1 = strip_tags($_POST['tipper1']);
-  //$options ='';
-}
-else {
-  $tipper1 = $_GET['best1'];
-}
-
-if (isset($_POST['tipper2']))
-{
-  $tipper2 = strip_tags($_POST['tipper2']);
-}
-else {
-  $tipper2 = $_GET['best2'];
+    $tipper1 = strip_tags($_POST['tipper1']);
+    //$options ='';
+} else {
+    $tipper1 = isset($_GET['best1']) ? strip_tags((string)$_GET['best1']) : '';
 }
 
-echo '    <div class="divlinks"><select name="tipper1">';
+if (isset($_POST['tipper2'])) {
+    $tipper2 = strip_tags($_POST['tipper2']);
+} else {
+    $tipper2 = isset($_GET['best2']) ? strip_tags((string)$_GET['best2']) : '';
+}
 
-for ($i=0; $i<sizeof($tipperklein); $i++) {
-  $name_tmp = (strlen($tipper[$i])-2 > 20) ? substr($tipper[$i], 0, 20) . '&hellip;]' : $tipper[$i];
-  echo '<option ' . ($tipperklein[$i] == strtolower($tipper1) ? 'selected="selected"' : "") . ' value="'.$tipper[$i].'">' . $name_tmp . '</option>';
+// Tippspieler 1 und 2 bestimmen; ohne Angabe (oder bei unbekanntem Namen) die beiden mit den meisten Gesamtpunkten
+$gesamtpunkte = [];
+foreach ($punkteSaison as $saisonWerte) {
+    foreach ($saisonWerte as $n => $pkt) {
+        $gesamtpunkte[$n] = ($gesamtpunkte[$n] ?? 0) + $pkt;
+    }
+}
+arsort($gesamtpunkte);
+$besten = array_keys($gesamtpunkte);
+$findeName = function ($eingabe) use ($tipper, $tipperklein) {
+    $idx = array_search(strtolower($eingabe), $tipperklein, true);
+    return $idx === false ? '' : $tipper[$idx];
+};
+$name1 = $findeName($tipper1);
+$name2 = $findeName($tipper2);
+if ($name1 === '') {
+    $name1 = $besten[0] ?? '';
+}
+if ($name2 === '') {
+    $name2 = $besten[1] ?? '';
+}
+$tipper1 = $name1;
+$tipper2 = $name2;
+
+echo '    <div class="divlinks"><select name="tipper1" onchange="this.form.submit()">';
+
+for ($i = 0; $i < sizeof($tipperklein); $i++) {
+    $name_tmp = (strlen($tipper[$i]) - 2 > 20) ? substr($tipper[$i], 0, 20) . '&hellip;]' : $tipper[$i];
+    echo '<option ' . ($tipper[$i] === $name1 ? 'selected="selected"' : '') . ' value="'.htmlspecialchars($tipper[$i], ENT_QUOTES, 'UTF-8').'">' . htmlspecialchars($name_tmp, ENT_QUOTES, 'UTF-8') . '</option>';
 }
 echo '</select>
 
     </div>
 
-    <div class="divmitte"><img src="ewiggraph.php?tipper1=' . $tipper1 . '&amp;tipper2=' . $tipper2 . '" alt="" /></div>
+      <div class="divrechts"><select name="tipper2" onchange="this.form.submit()">';
 
-      <div class="divrechts"><select name="tipper2">';
-
-for ($i=0; $i<sizeof($tipperklein); $i++) {
-  $name_tmp = (strlen($tipper[$i])-2 > 20) ? substr($tipper[$i], 0, 20) . '&hellip;]' : $tipper[$i];
-  echo '<option ' . ($tipperklein[$i] == strtolower($tipper2) ? 'selected="selected"' : "") . ' value="'.$tipper[$i].'">' . $name_tmp . '</option>';
+for ($i = 0; $i < sizeof($tipperklein); $i++) {
+    $name_tmp = (strlen($tipper[$i]) - 2 > 20) ? substr($tipper[$i], 0, 20) . '&hellip;]' : $tipper[$i];
+    echo '<option ' . ($tipper[$i] === $name2 ? 'selected="selected"' : '') . ' value="'.htmlspecialchars($tipper[$i], ENT_QUOTES, 'UTF-8').'">' . htmlspecialchars($name_tmp, ENT_QUOTES, 'UTF-8') . '</option>';
 }
 echo '</select>
 
     </div>';
+
+// Kurven: Punkte je Saison (null = in dieser Saison nicht dabei -> Lücke)
+$kurven = [];
+foreach ([[$name1, '0,0,255'], [$name2, '255,0,0']] as $eintrag) {
+    if ($eintrag[0] === '') {
+        continue;
+    }
+    $werte = [];
+    foreach ($punkteSaison as $saisonWerte) {
+        $werte[] = array_key_exists($eintrag[0], $saisonWerte) ? $saisonWerte[$eintrag[0]] : null;
+    }
+    $kurven[] = ['label' => $eintrag[0], 'color' => $eintrag[1], 'data' => $werte];
+}
+$jsonFlags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+
+echo '
+    <div class="divmitte">
+      <div style="position:relative;width:100%;max-width:720px;height:380px;"><canvas id="ewigChart"></canvas></div>
+    </div>
+    <script src="' . URL_TO_JSDIR . '/chart.js"></script>
+    <script>
+      (function () {
+        var kurven = ' . json_encode($kurven, $jsonFlags) . ';
+        var axisColor = "rgba(90, 90, 90, 1)";
+        new Chart(document.getElementById("ewigChart"), {
+          type: "line",
+          data: {
+            labels: ' . json_encode($saisonLabels, $jsonFlags) . ',
+            datasets: kurven.map(function (k) {
+              return {
+                label: k.label,
+                data: k.data,
+                fill: false,
+                spanGaps: false,
+                tension: 0.4,
+                cubicInterpolationMode: "monotone",
+                borderWidth: 3,
+                pointRadius: 4,
+                backgroundColor: "rgba(" + k.color + ",1)",
+                borderColor: "rgba(" + k.color + ",1)"
+              };
+            })
+          },
+          options: {
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: axisColor }, title: { display: true, text: "Saison", color: axisColor }, ticks: { color: axisColor } },
+              y: { min: 0, grid: { color: axisColor }, title: { display: true, text: "Punkte", color: axisColor }, ticks: { color: axisColor, precision: 0 } }
+            },
+            plugins: { tooltip: { mode: "index", intersect: false } }
+          }
+        });
+      })();
+    </script>';
 
 ?>
     <div class="absenden"><input type="submit" value="absenden" /></div>

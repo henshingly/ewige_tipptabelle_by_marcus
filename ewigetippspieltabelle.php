@@ -29,36 +29,36 @@
 /***** ab hier können Einstellungen vorgenommen werden ************************/
 
 // Schriftart - bei Standardschrift Feld leer lassen -> $fontfamily = "";
-$fontfamily = "Verdana, Arial, Courier, MS Serif";
+$fontfamily = 'Verdana, Arial, Courier, MS Serif';
 
 // Größe der Tabellenschrift in Punkt
-$fontsize = "10";
+$fontsize = '10';
 
 // Schriftfarbe
-$fontcolor = "#000000";
+$fontcolor = '#000000';
 
 // Schriftgröße der Überschrift in Pixel
-$headlinefontsize = "20";
+$headlinefontsize = '20';
 
 // Farbe des Tabellenkopfes
-$tableheadercolor = "#c7cfd6";
+$tableheadercolor = '#c7cfd6';
 
 // Farbe des Tabellenschriftfarbe
-$tablefontcolor = "#123456";
+$tablefontcolor = '#123456';
 
 // Farbe des Tabellenhintergrundes
-$tablebackcolor = "#C7CFD6";
+$tablebackcolor = '#C7CFD6';
 
 // Tabellenschriftgröße
-$tablefontsize = "10";
+$tablefontsize = '10';
 
 // Zellenhintergrundfarbe für Platz 1 bis 3
-$colorplatz1       = "#efed25";  // wenn nicht dann frei lassen -> $colorplatz1="";
-$colorplatz1_hover = "#D8C317";
-$colorplatz2       = "#bab4a2";  // wenn nicht dann frei lassen -> $colorplatz2="";
-$colorplatz2_hover = "#A39986";
-$colorplatz3       = "#cc9b18";  // wenn nicht dann frei lassen -> $colorplatz3="";
-$colorplatz3_hover = "#E3BD0F";
+$colorplatz1       = '#efed25';  // wenn nicht dann frei lassen -> $colorplatz1="";
+$colorplatz1_hover = '#D8C317';
+$colorplatz2       = '#bab4a2';  // wenn nicht dann frei lassen -> $colorplatz2="";
+$colorplatz2_hover = '#A39986';
+$colorplatz3       = '#cc9b18';  // wenn nicht dann frei lassen -> $colorplatz3="";
+$colorplatz3_hover = '#E3BD0F';
 
 // Anzahl der anzuzeigenden Tipper festlegen
 $showtipper = -1;  // -1=keine Begrenzung
@@ -86,17 +86,17 @@ $show_punkte  = 1;  // Anzahl Punkte -> hier ist die 1 empfohlen
 $show_team    = 1;  // Teamnamen anzeigen
 
 // Zeichen im Tabellenkopf bei der Ausgabe einstellen - Variablen anpassen
-$var_spiele             = "Sp";  // Anzahl Spiele getippt - Standard "Sp"
-$var_spiele_title       = "Anzahl Spiele getippt";
-$var_joker              = "JP";  // durch Joker dazugewonnene Punkte - standard "JP"
-$var_prozrichtig        = "Pkt ø";  // bei Tendenztipp
-$var_prozrichtig_title  = "Punkte pro Spiel";
-$var_tippsrichtig       = "Pkt";  // Anzahl Tipps richtig - Standard "P"
-$var_tippsrichtig_title = "Anzahl Tipps richtig";
+$var_spiele             = 'Sp';  // Anzahl Spiele getippt - Standard "Sp"
+$var_spiele_title       = 'Anzahl Spiele getippt';
+$var_joker              = 'JP';  // durch Joker dazugewonnene Punkte - standard "JP"
+$var_prozrichtig        = 'Pkt ø';  // bei Tendenztipp
+$var_prozrichtig_title  = 'Punkte pro Spiel';
+$var_tippsrichtig       = 'Pkt';  // Anzahl Tipps richtig - Standard "P"
+$var_tippsrichtig_title = 'Anzahl Tipps richtig';
 
 
 // Seitentitel
-$title = "www.bcerlbach.de - Ewige Tippspieltabelle";
+$title = 'www.bcerlbach.de - Ewige Tippspieltabelle';
 
 /***** ab hier nichts mehr ändern *********************************************/
 
@@ -105,130 +105,143 @@ $title = "www.bcerlbach.de - Ewige Tippspieltabelle";
 require_once(dirname(__FILE__).'/init.php');
 
 // falls die Auswertung nur eingeloggt User zu Gesicht bekommen sollen:
-if(($show_regist_only == 1) and ($_SESSION["lmotipperok"] != 5)) {
-  die("Sorry, aber der Zugang ist nur für eingeloggte User möglich!");
+if (($show_regist_only == 1) and (!isset($_SESSION['lmotipperok']) || $_SESSION['lmotipperok'] != 5)) {
+    die('Sorry, aber der Zugang ist nur für eingeloggte User möglich!');
 }
 
 //$zeit1 = microtime();  //zeit nehmen start
 
 
-if(!defined('PATH_TO_TIPPARCHIV'))  define('PATH_TO_TIPPARCHIV', PATH_TO_ADDONDIR . "/tipp/archiv/");
-
-if(!is_dir(PATH_TO_TIPPARCHIV)) {
-  die("Pfad zum Tippspielarchiv " . PATH_TO_TIPPARCHIV . " ist nicht vorhanden!<br>Den Ordner nicht erstellt?");
+if (!defined('PATH_TO_TIPPARCHIV')) {
+    define('PATH_TO_TIPPARCHIV', PATH_TO_ADDONDIR . '/tipp/archiv/');
 }
 
-$gesamtfiles = array();
+if (!is_dir(PATH_TO_TIPPARCHIV)) {
+    die('Pfad zum Tippspielarchiv ' . PATH_TO_TIPPARCHIV . ' ist nicht vorhanden!<br>Den Ordner nicht erstellt?');
+}
+
+$gesamtfiles = [];
+$gesamt = [];
+$htmlbody = '';
+$punkte_max = 0;
+$best1 = $best2 = '';
 
 $tipparchiv = opendir(PATH_TO_TIPPARCHIV);
 
-while($file = readdir($tipparchiv)) {
-  if($file != "." && $file != ".." && $file != "index.htm") {
-    // Prüfen ob die Archivdatei richtig benannt ist - Form gesamtXXYY.aus
-    if((strlen($file) == 14) and (substr($file, 0, 6) == "gesamt") and (substr($file, 10, 4) == ".aus")) {
-      array_push($gesamtfiles, $file);
+while (($file = readdir($tipparchiv)) !== false) {
+    if ($file != '.' && $file != '..' && $file != 'index.htm') {
+        // Prüfen ob die Archivdatei richtig benannt ist - Form gesamtXXYY.aus
+        if ((strlen($file) == 14) and (substr($file, 0, 6) == 'gesamt') and (substr($file, 10, 4) == '.aus')) {
+            array_push($gesamtfiles, $file);
+        }
     }
-  }
 }
 closedir($tipparchiv);
 
-if(sizeof($gesamtfiles) == 0) {
-  die("Es ist keine Auswertungsfiles *.aus im Ordner " . PATH_TO_TIPPARCHIV . " vorhanden!");
+if (sizeof($gesamtfiles) == 0) {
+    die('Es ist keine Auswertungsfiles *.aus im Ordner ' . PATH_TO_TIPPARCHIV . ' vorhanden!');
 }
 
 // Sortieren nach Datum
 array_multisort($gesamtfiles, SORT_ASC, SORT_STRING, $gesamtfiles);
 
-if(($aktuelle_saison_einbinden == 1) or ((isset($_GET['aktuell'])) and (filter_var($_GET['aktuell'], FILTER_VALIDATE_INT) === 1))) {
-  array_push($gesamtfiles, PATH_TO_ADDONDIR . "/tipp/tipps/auswert/gesamt.aus");
-  $aktuelle_saison_einbinden = 1;  // Falls der Parameter genutzt wird
+if (($aktuelle_saison_einbinden == 1) or ((isset($_GET['aktuell'])) and (filter_var($_GET['aktuell'], FILTER_VALIDATE_INT) === 1))) {
+    array_push($gesamtfiles, PATH_TO_ADDONDIR . '/tipp/tipps/auswert/gesamt.aus');
+    $aktuelle_saison_einbinden = 1;  // Falls der Parameter genutzt wird
 }
 
 
 // Gesamtarray mit allen Daten bilden
-for($s = 0; $s < count($gesamtfiles); $s ++) {
-  if(($aktuelle_saison_einbinden == 1) and ($s+1 == count($gesamtfiles))) {
-    $auswertdatei = PATH_TO_ADDONDIR . "/tipp/tipps/auswert/gesamt.aus";
-    /*$j1 = substr($gesamtfiles[$s-1], 6, 2) + 1;
-    $j2 = $j1 + 1;
-    $saison = (strlen($j1) != 1 ? $j1 : "0" . $j1) . (strlen($j2) != 1 ? $j2 : "0" . $j2);*/
-    $saison = "xxyy";
-  }
-  else {
-    // Datei gesamt.aus in Array einlesen... evtl. Pfad anpassen
-    $auswertdatei = PATH_TO_TIPPARCHIV . $gesamtfiles[$s];  //"gesamt2324.aus";
-    $saison = substr($gesamtfiles[$s], 6, 4);
-  }
-
-  $array = @file($auswertdatei);
-
-
-  // Anzahl der Tippligen ermitteln
-  $zeile = trim($array[1]);  // unnötige Zeilenumbrüche ... entfernen
-  $anzligen = (int)substr($zeile, 9, strlen($zeile));  // ->eigentlich immer ab der 10. stelle
-
-  $ligenkurz = array();  // Beinhaltet Kürzel für Ligen
-  $anzgetipptkurz = array();  // Beinhaltet Kürzel für Anzahl getippter Spiele
-  for($i=1; $i<=$anzligen; $i++) {
-    array_push($ligenkurz, 'TP'.$i);      //-- ligenkürzel = 'TP'.$i
-    array_push($anzgetipptkurz, 'SG'.$i);  //-- kürzel = 'SG'.$i
-  }
-
-  $anztipper=0;
-  $tipper=array();
-  $spiele=array();
-  $punkte=array();
-
-  for($i = $anzligen+3; $i < sizeof($array); $i++) {
-
-    // Usernamen ermitteln, wenn gefunden, in Array speichern
-    $posname = strpos($array[$i], "[");
-    if($posname !== false) {
-      // Gefundenen Namen ins Array speichern
-      $tipper[++$anztipper] = trim($array[$i]);
-      $spiele[$anztipper] = $punkte[$anztipper] = 0;
+for ($s = 0; $s < count($gesamtfiles); $s++) {
+    if (($aktuelle_saison_einbinden == 1) and ($s + 1 == count($gesamtfiles))) {
+        $auswertdatei = PATH_TO_ADDONDIR . '/tipp/tipps/auswert/gesamt.aus';
+        /*$j1 = substr($gesamtfiles[$s-1], 6, 2) + 1;
+        $j2 = $j1 + 1;
+        $saison = (strlen($j1) != 1 ? $j1 : "0" . $j1) . (strlen($j2) != 1 ? $j2 : "0" . $j2);*/
+        $saison = 'xxyy';
+    } else {
+        // Datei gesamt.aus in Array einlesen... evtl. Pfad anpassen
+        $auswertdatei = PATH_TO_TIPPARCHIV . $gesamtfiles[$s];  //"gesamt2324.aus";
+        $saison = substr($gesamtfiles[$s], 6, 4);
     }
 
+    $array = @file($auswertdatei);
+    if (!is_array($array)) {
+        continue;
+    }  // Datei nicht lesbar -> Saison überspringen
 
-    // foreach1 ermittelt die erzielten Punkte
-    foreach($ligenkurz as $value) {
-      $value = $value."=";  // = muss stehen da bei TP1 auch TP10 TP11 erfasst
-      $pos1 = strpos($array[$i], $value);
-      if($pos1 !== false) {
-        // Punkte gleich Array dazu addieren
-        $punkte[$anztipper] += (int)ltrim(strrchr($array[$i],'='),'=');
-      }
+
+    // Anzahl der Tippligen ermitteln
+    $zeile = trim($array[1] ?? '');  // unnötige Zeilenumbrüche ... entfernen
+    $anzligen = (int)substr($zeile, 9, strlen($zeile));  // ->eigentlich immer ab der 10. stelle
+
+    $ligenkurz = [];  // Beinhaltet Kürzel für Ligen
+    $anzgetipptkurz = [];  // Beinhaltet Kürzel für Anzahl getippter Spiele
+    for ($i = 1; $i <= $anzligen; $i++) {
+        array_push($ligenkurz, 'TP'.$i);      //-- ligenkürzel = 'TP'.$i
+        array_push($anzgetipptkurz, 'SG'.$i);  //-- kürzel = 'SG'.$i
     }
-    // foreach1 end
 
-    // foreach2 ermittelt die Anzahl an getippten Spielen
-    foreach($anzgetipptkurz as $value) {
-      $value = $value."=";  // = muss stehen da bei TP1 auch TP10 TP11 erfasst
-      $pos1 = strpos($array[$i], $value);
-      if($pos1 !== false) {
-        // Anzahl getippter Spiele gleich Array dazu addieren
-        $spiele[$anztipper] += (int)ltrim(strrchr($array[$i],'='),'=');
-      }
+    $anztipper = 0;
+    $tipper = [];
+    $spiele = [];
+    $punkte = [];
+
+    for ($i = $anzligen + 3; $i < sizeof($array); $i++) {
+
+        // Usernamen ermitteln, wenn gefunden, in Array speichern
+        $posname = strpos($array[$i], '[');
+        if ($posname !== false) {
+            // Gefundenen Namen ins Array speichern
+            $tipper[++$anztipper] = trim($array[$i]);
+            $spiele[$anztipper] = $punkte[$anztipper] = 0;
+        }
+
+
+        // foreach1 ermittelt die erzielten Punkte
+        foreach ($ligenkurz as $value) {
+            $value = $value.'=';  // = muss stehen da bei TP1 auch TP10 TP11 erfasst
+            $pos1 = strpos($array[$i], $value);
+            if ($pos1 !== false && $anztipper > 0) {
+                // Punkte gleich Array dazu addieren
+                $punkte[$anztipper] += (int)ltrim(strrchr($array[$i], '='), '=');
+            }
+        }
+        // foreach1 end
+
+        // foreach2 ermittelt die Anzahl an getippten Spielen
+        foreach ($anzgetipptkurz as $value) {
+            $value = $value.'=';  // = muss stehen da bei TP1 auch TP10 TP11 erfasst
+            $pos1 = strpos($array[$i], $value);
+            if ($pos1 !== false && $anztipper > 0) {
+                // Anzahl getippter Spiele gleich Array dazu addieren
+                $spiele[$anztipper] += (int)ltrim(strrchr($array[$i], '='), '=');
+            }
+        }
+        // foreach2 end
+
     }
-    // foreach2 end
+    // for - Anzahl Tipper ermitteln
+    // echo "<pre>";
+    // echo ($tipper);
 
-  }
-  // for - Anzahl Tipper ermitteln
-  // echo "<pre>";
-  // echo ($tipper);
+    //array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_DESC, SORT_NUMERIC, $tipper, SORT_DESC, SORT_STRING);
+    array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $tipper, SORT_ASC, SORT_STRING);
 
-  //array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_DESC, SORT_NUMERIC, $tipper, SORT_DESC, SORT_STRING);
-  array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $tipper, SORT_ASC, SORT_STRING);
+    for ($i = 0; $i < count($tipper); $i++) {
+        $name = $tipper[$i];
+        if (!isset($gesamt[$name])) {
+            $gesamt[$name] = ['gesamt_spiele' => 0, 'gesamt_punkte' => 0];
+        }
+        $gesamt[$name]['gesamt_spiele'] += $spiele[$i];  // Spiele werden aufaddiert = gesamtspiele
+        $gesamt[$name]['gesamt_punkte'] += $punkte[$i];  // Punkte werden aufaddiert = gesamtpunkte
+        $gesamt[$name]['spiele'.$saison] = $spiele[$i];  // Für jede Saison wird ein neuer Eintrag angelegt
+        $gesamt[$name]['punkte'.$saison] = $punkte[$i];
 
-  for($i=0; $i<count($tipper); $i++) {
-    $name=$tipper[$i];
-    $gesamt[$name]['gesamt_spiele'] += $spiele[$i];  // Spiele werden aufaddiert = gesamtspiele
-    $gesamt[$name]['gesamt_punkte'] += $punkte[$i];  // Punkte werden aufaddiert = gesamtpunkte
-    $gesamt[$name]['spiele'.$saison] = $spiele[$i];  // Für jede Saison wird ein neuer Eintrag angelegt
-    $gesamt[$name]['punkte'.$saison] = $punkte[$i];
-
-    if($punkte[$i] > $punkte_max) { $punkte_max = $punkte[$i]; }  // Höchsten Punktewerte ermitteln
-  }
+        if ($punkte[$i] > $punkte_max) {
+            $punkte_max = $punkte[$i];
+        }  // Höchsten Punktewerte ermitteln
+    }
 }
 
 unset($punkte);
@@ -241,72 +254,83 @@ unset($spiele);
 // Gesamt Array ist nun mit alles Saisons gefüllt
 // nun geht es ans sortieren....
 $z = 0;
-$tipper = array();
-$quote = array();
+$tipper = [];
+$quote = [];
 
 // Dieses foreach stellt Werte für die Usersortierung bereit
-foreach($gesamt as $name => $inhalt) {
-  if(($shownichttipper != 0) or ($inhalt['gesamt_spiele'] > 0)) {
-    $punkte[$name] = $inhalt['gesamt_punkte'];
-    $spiele[$name] = $inhalt['gesamt_spiele'];
-    $tipper[] = strtolower($name);
-    if($inhalt['gesamt_spiele'] > 0) {
-      $quote[] = $inhalt['gesamt_punkte']/$inhalt['gesamt_spiele'];
+foreach ($gesamt as $name => $inhalt) {
+    if (($shownichttipper != 0) or ($inhalt['gesamt_spiele'] > 0)) {
+        $punkte[$name] = $inhalt['gesamt_punkte'];
+        $spiele[$name] = $inhalt['gesamt_spiele'];
+        $tipper[] = strtolower($name);
+        if ($inhalt['gesamt_spiele'] > 0) {
+            $quote[] = $inhalt['gesamt_punkte'] / $inhalt['gesamt_spiele'];
+        } else {
+            $quote[] = 0;
+        }
     }
-    else {
-      $quote[] = 0;
-    }
-  }
 }
 
 array_multisort($punkte, SORT_DESC, SORT_NUMERIC);
 $i = 1;
-foreach($punkte as $name => $anzpunkte) {
-  switch ($i) {
-    case 1: $best1 = $name; break;  // Platz 1
-    case 2: $best2 = $name; break;  // Platz 2
-  }
-  if($i ++ == 2) { break; }
+foreach ($punkte as $name => $anzpunkte) {
+    switch ($i) {
+        case 1: $best1 = $name;
+            break;  // Platz 1
+        case 2: $best2 = $name;
+            break;  // Platz 2
+    }
+    if ($i++ == 2) {
+        break;
+    }
 }
 
-$sort = strip_tags($_GET['sort']);
+$sort = isset($_GET['sort']) ? strip_tags((string)$_GET['sort']) : '';
 switch ($sort) {
-  case "nameauf": array_multisort($tipper, SORT_ASC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "nameab": array_multisort($tipper, SORT_DESC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "punkteauf": array_multisort($punkte, SORT_ASC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "punkteab": array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "quoteauf": array_multisort($quote, SORT_ASC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "quoteab": array_multisort($quote, SORT_DESC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte); break;
-  case "spieleauf": array_multisort($spiele, SORT_ASC, SORT_NUMERIC, $punkte, SORT_DESC, SORT_NUMERIC, $punkte); break;
-  case "spieleab": array_multisort($spiele, SORT_DESC, SORT_NUMERIC, $punkte, SORT_DESC, SORT_NUMERIC, $punkte); break;
-  //case "punkteab": echo break;
-  default : array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
+    case 'nameauf': array_multisort($tipper, SORT_ASC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
+        break;
+    case 'nameab': array_multisort($tipper, SORT_DESC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
+        break;
+    case 'punkteauf': array_multisort($punkte, SORT_ASC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
+        break;
+    case 'punkteab': array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
+        break;
+    case 'quoteauf': array_multisort($quote, SORT_ASC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
+        break;
+    case 'quoteab': array_multisort($quote, SORT_DESC, SORT_STRING, $punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
+        break;
+    case 'spieleauf': array_multisort($spiele, SORT_ASC, SORT_NUMERIC, $punkte, SORT_DESC, SORT_NUMERIC, $punkte);
+        break;
+    case 'spieleab': array_multisort($spiele, SORT_DESC, SORT_NUMERIC, $punkte, SORT_DESC, SORT_NUMERIC, $punkte);
+        break;
+        //case "punkteab": echo break;
+    default: array_multisort($punkte, SORT_DESC, SORT_NUMERIC, $spiele, SORT_ASC, SORT_NUMERIC, $punkte);
 }
 unset($tipper);
 unset($quote);
 
 // Eingeloggten User ermitteln
-$username = "";
-if((isset($_SESSION['lmotippername']) && $_SESSION['lmotippername'] != "") && (isset($_SESSION['lmotipperok']) && $_SESSION['lmotipperok'] > 0) ) {
-  $username = "[". $_SESSION['lmotippername'] ."]";
+$username = '';
+if ((isset($_SESSION['lmotippername']) && $_SESSION['lmotippername'] != '') && (isset($_SESSION['lmotipperok']) && $_SESSION['lmotipperok'] > 0)) {
+    $username = '['. $_SESSION['lmotippername'] .']';
 }
 
 $punkte_max = ceil($punkte_max / 100);  // ceil - aufrunden
-$popbreite = ((sizeof($gesamtfiles) + 1) * 30) + 35 + (176 * 2) + (6 * 5) + 35;
-$pophoehe = (($punkte_max + 1) * 30) + 47 + 73;
+$popbreite = 800;  // Größe des Popup-Fensters (Chart.js passt die Grafik an)
+$pophoehe = 600;
 //$popbreite = 700;
 //$pophoehe = 400;
 
 $ausgabe = '<h2>Ewige Tipptabelle</h2>
-<div class="zentriert"><a href="javascript:void(0);" class="auswert" onclick="window.open(\'ewigpopup.php?best1='.$best1.'&amp;best2='.$best2.'\',\'_blank\',\'width='.$popbreite.',height='.$pophoehe.',left=0,top=0,scrollbars=yes\')" title="zum Tippspielervergleich">Tippspielervergleich</a>
+<div class="zentriert"><a href="javascript:void(0);" class="auswert" onclick="window.open(\'ewigpopup.php?best1='.rawurlencode($best1).'&amp;best2='.rawurlencode($best2).'\',\'_blank\',\'width='.$popbreite.',height='.$pophoehe.',left=0,top=0,scrollbars=yes\')" title="zum Tippspielervergleich">Tippspielervergleich</a>
 <br /><br />
 </div>
 <table class="auswert">
 <tr class="nohover"><th>&nbsp;Platz</th>';
 
-if($sortieren_erlauben == 1) {
+if ($sortieren_erlauben == 1) {
 
-$ausgabe .= '<th>Tippspieler<a href="'.$_SERVER['SCRIPT_NAME'].'?sort=nameauf"><img src="'.URL_TO_IMGDIR.'/pfeil_hoch.png" class="hoch" alt="hoch" title="nach Name aufsteigend sortieren" /></a> <a href="'.$_SERVER['SCRIPT_NAME'].'?sort=nameab"><img src="'.URL_TO_IMGDIR.'/pfeil_runter.png" alt="runter" class="runter" title="nach Name absteigend sortieren" /></a></th>
+    $ausgabe .= '<th>Tippspieler<a href="'.$_SERVER['SCRIPT_NAME'].'?sort=nameauf"><img src="'.URL_TO_IMGDIR.'/pfeil_hoch.png" class="hoch" alt="hoch" title="nach Name aufsteigend sortieren" /></a> <a href="'.$_SERVER['SCRIPT_NAME'].'?sort=nameab"><img src="'.URL_TO_IMGDIR.'/pfeil_runter.png" alt="runter" class="runter" title="nach Name absteigend sortieren" /></a></th>
 
 <th>&nbsp;<acronym title="'.$var_spiele_title.'">'.$var_spiele.'</acronym><a href="'.$_SERVER['SCRIPT_NAME'].'?sort=spieleauf"><img src="'.URL_TO_IMGDIR.'/pfeil_hoch.png"  class="hoch" alt="hoch" title="nach Anzahl Spiele aufsteigend sortieren" /></a> <a href="'.$_SERVER['SCRIPT_NAME'].'?sort=spieleab"><img src="'.URL_TO_IMGDIR.'/pfeil_runter.png" alt="runter" class="runter" title="nach Anzahl Spiele absteigend sortieren" /></a></th>
 
@@ -314,10 +338,9 @@ $ausgabe .= '<th>Tippspieler<a href="'.$_SERVER['SCRIPT_NAME'].'?sort=nameauf"><
 
 <th>&nbsp;&nbsp;<acronym title="'.$var_tippsrichtig_title.'">'.$var_tippsrichtig.'</acronym><a href="'.$_SERVER['SCRIPT_NAME'].'?sort=punkteauf"><img src="'.URL_TO_IMGDIR.'/pfeil_hoch.png" alt="hoch" class="hoch" title="nach Punkte aufsteigend sortieren" /></a> <a href="'.$_SERVER['SCRIPT_NAME'].'?sort=punkteab"><img src="'.URL_TO_IMGDIR.'/pfeil_runter.png" alt="runter" class="runter" title="nach Punkte absteigend sortieren" /></a></th>';
 
-}
-else {
+} else {
 
-$ausgabe .= '<th>Tippspieler</th>
+    $ausgabe .= '<th>Tippspieler</th>
 <th>&nbsp;<acronym title="'.$var_spiele_title.'">'.$var_spiele.'</acronym>&nbsp;</th>
 <th>&nbsp;&nbsp;<acronym title="'.$var_prozrichtig_title.'">'.$var_prozrichtig.'</acronym>&nbsp;</th>
 <th>&nbsp;&nbsp;<acronym title="'.$var_tippsrichtig_title.'">'.$var_tippsrichtig.'</acronym>&nbsp;</th>';
@@ -332,111 +355,121 @@ $pkttmp = 0;
 $sptmp = 0;
 
 // Ausgabe aufbereiten
-foreach($punkte as $name => $anzpunkte) {
-  $platz++;
-  $showplatz=true;
+foreach ($punkte as $name => $anzpunkte) {
+    $platz++;
+    $showplatz = true;
 
-  if($platz-1 == $showtipper) {
-    break;
-  }
-
-  // Bedingung, die alle Nicht-Tipper rausfiltert falls gewünscht
-  if(($shownichttipper != 0) or ($spiele[$name] != 0)) {
-
-    // Ausgabe der Platzierung wenn:
-    // 1. Punkte ungleich dem Vorgänger
-    // 2. Punkte gleich, aber Anzahl getippter Spiele unterschiedlich
-    if(($punkte[$name] != $pkttmp) or (($punkte[$name] == $pkttmp) and (($spiele[$name] != $sptmp)))) {
-
-      $platz2++;
-
-      switch ($platz) {
-        case 1 : $ausgabe .= '<tr class="colorplatz1 '; break;
-        case 2 : $ausgabe .= '<tr class="colorplatz2 '; break;
-        case 3 : $ausgabe .= '<tr class="colorplatz3 '; break;
-        default: $ausgabe .= '<tr class="';
-      }  // switch end
-
-    }
-    else {  // wenn Gleichheit bei Punkten und Spielen besteht
-
-      switch ($platz2) {
-        case 1 : $ausgabe .= '<tr class="colorplatz1 '; break;
-        case 2 : $ausgabe .= '<tr class="colorplatz2 '; break;
-        case 3 : $ausgabe .= '<tr class="colorplatz3 '; break;
-        default: $ausgabe .= '<tr class="';
-      }  // switch end
-
-      $showplatz = false;
+    if ($platz - 1 == $showtipper) {
+        break;
     }
 
-    $ausgabe .= 'klick" id="tr'.$platz.'">';
+    // Bedingung, die alle Nicht-Tipper rausfiltert falls gewünscht
+    if (($shownichttipper != 0) or ($spiele[$name] != 0)) {
 
-    // Auf Länge des Namens prüfen
-    if((strlen($name)-2 > $max_laenge_name) and ($max_laenge_name > 0)) {
-      $name_tmp = '<acronym title="'.$name.'">' . substr($name, 0, $max_laenge_name) . '&hellip;]</acronym>';
-    }
-    else { $name_tmp = $name; }
+        // Ausgabe der Platzierung wenn:
+        // 1. Punkte ungleich dem Vorgänger
+        // 2. Punkte gleich, aber Anzahl getippter Spiele unterschiedlich
+        if (($punkte[$name] != $pkttmp) or (($punkte[$name] == $pkttmp) and (($spiele[$name] != $sptmp)))) {
 
-    // Falls User eingeloggt -> username bold
-    if($username == $name) {
-      $ausgabe .=  '<td class="fett"><a name="to'.$platz.'"></a>'. ($showplatz ? $platz : '&nbsp;') . '</td><td class="fett">';  $ausgabe .= $name_tmp . '</td><td class="fett">&nbsp;&nbsp;'. $spiele[$name]. '&nbsp;&nbsp;</td><td class="fett">&nbsp;&nbsp;';
-      if($spiele[$name] > 0) {
-        $quo = round($anzpunkte/$spiele[$name], 2); $ausgabe .= ($quo == "0.5" ? "0.50" : $quo);
-      }
-      $ausgabe .=  '&nbsp;&nbsp;</td><td class="fett">&nbsp;&nbsp;'.$anzpunkte . '&nbsp;&nbsp;</td><td><img src="img/mehr1.png" id="imgtr'.$platz.'" alt="zeige alle Saisons" title="zeige alle Saisons von '.$name.'" /></td></tr>';
-    }
-    else {
-      $ausgabe .=  '<td><a name="to'.$platz.'"></a>'. ($showplatz ? $platz : '&nbsp;') . '</td><td>';  $ausgabe .= $name_tmp . '</td><td>&nbsp;&nbsp;'. $spiele[$name]. '&nbsp;&nbsp;</td><td>&nbsp;&nbsp;';
-      if($spiele[$name] > 0) {
-        $quo = round($anzpunkte/$spiele[$name], 2); $ausgabe .= ($quo == "0.5" ? "0.50" : $quo);
-      }
-      $ausgabe .=  '&nbsp;&nbsp;</td><td>&nbsp;&nbsp;'.$anzpunkte . '&nbsp;&nbsp;</td><td><img src="'.URL_TO_IMGDIR.'/mehr1.png" id="imgtr'.$platz.'" alt="zeige alle Saisons" title="zeige alle Saisons von '.$name.'" /></td>
+            $platz2++;
+
+            switch ($platz) {
+                case 1 : $ausgabe .= '<tr class="colorplatz1 ';
+                    break;
+                case 2 : $ausgabe .= '<tr class="colorplatz2 ';
+                    break;
+                case 3 : $ausgabe .= '<tr class="colorplatz3 ';
+                    break;
+                default: $ausgabe .= '<tr class="';
+            }  // switch end
+
+        } else {  // wenn Gleichheit bei Punkten und Spielen besteht
+
+            switch ($platz2) {
+                case 1 : $ausgabe .= '<tr class="colorplatz1 ';
+                    break;
+                case 2 : $ausgabe .= '<tr class="colorplatz2 ';
+                    break;
+                case 3 : $ausgabe .= '<tr class="colorplatz3 ';
+                    break;
+                default: $ausgabe .= '<tr class="';
+            }  // switch end
+
+            $showplatz = false;
+        }
+
+        $ausgabe .= 'klick" id="tr'.$platz.'">';
+
+        // Auf Länge des Namens prüfen
+        $name_h = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');  // für die HTML-Ausgabe
+        if ((strlen($name) - 2 > $max_laenge_name) and ($max_laenge_name > 0)) {
+            $name_tmp = '<acronym title="'.$name_h.'">' . htmlspecialchars(substr($name, 0, $max_laenge_name), ENT_QUOTES, 'UTF-8') . '&hellip;]</acronym>';
+        } else {
+            $name_tmp = $name_h;
+        }
+
+        // Falls User eingeloggt -> username bold
+        if ($username == $name) {
+            $ausgabe .=  '<td class="fett"><a name="to'.$platz.'"></a>'. ($showplatz ? $platz : '&nbsp;') . '</td><td class="fett">';
+            $ausgabe .= $name_tmp . '</td><td class="fett">&nbsp;&nbsp;'. $spiele[$name]. '&nbsp;&nbsp;</td><td class="fett">&nbsp;&nbsp;';
+            if ($spiele[$name] > 0) {
+                $quo = round($anzpunkte / $spiele[$name], 2);
+                $ausgabe .= ($quo == '0.5' ? '0.50' : $quo);
+            }
+            $ausgabe .=  '&nbsp;&nbsp;</td><td class="fett">&nbsp;&nbsp;'.$anzpunkte . '&nbsp;&nbsp;</td><td><img src="'.URL_TO_IMGDIR.'/mehr1.png" id="imgtr'.$platz.'" alt="zeige alle Saisons" title="zeige alle Saisons von '.$name_h.'" /></td></tr>';
+        } else {
+            $ausgabe .=  '<td><a name="to'.$platz.'"></a>'. ($showplatz ? $platz : '&nbsp;') . '</td><td>';
+            $ausgabe .= $name_tmp . '</td><td>&nbsp;&nbsp;'. $spiele[$name]. '&nbsp;&nbsp;</td><td>&nbsp;&nbsp;';
+            if ($spiele[$name] > 0) {
+                $quo = round($anzpunkte / $spiele[$name], 2);
+                $ausgabe .= ($quo == '0.5' ? '0.50' : $quo);
+            }
+            $ausgabe .=  '&nbsp;&nbsp;</td><td>&nbsp;&nbsp;'.$anzpunkte . '&nbsp;&nbsp;</td><td><img src="'.URL_TO_IMGDIR.'/mehr1.png" id="imgtr'.$platz.'" alt="zeige alle Saisons" title="zeige alle Saisons von '.$name_h.'" /></td>
       </tr>';
-    }
+        }
 
-    $sptmp = $spiele[$name];
-    $pkttmp = $punkte[$name];
-    $platztmp = $platz;
+        $sptmp = $spiele[$name];
+        $pkttmp = $punkte[$name];
+        $platztmp = $platz;
 
-    $ausgabe .=  '<tr class="toshow nohover a'.$platz.'"><td colspan="7">
+        $ausgabe .=  '<tr class="toshow nohover a'.$platz.'"><td colspan="7">
   <table border="0" class="saisons">
   <tr><th>&nbsp;Saison&nbsp;</th><th>&nbsp;'.$var_spiele.'&nbsp;</th><th>&nbsp;'.$var_prozrichtig.'&nbsp;</th><th>&nbsp;'.$var_tippsrichtig.'&nbsp;</th></tr>';
 
-    $ungerade = 0;
+        $ungerade = 0;
 
-    // Einzelne Saisons aufbereiten
-    foreach($gesamt[$name] as $value => $inhalt) {
-      if(($value != "gesamt_spiele") and ($value != "gesamt_punkte")) {
-        if(++$ungerade == 1) {
-          // Spiele
-          if($value == "spielexxyy") {
-            $ausgabe .= '<tr><td><acronym title="Aktuelle Tippsaison (ist noch nicht beendet)">aktuell</acronym></td><td>&nbsp;'. $spiele_tmp = $inhalt .'&nbsp;</td>';
-          }
-          else {
-            $ausgabe .= '<tr><td>'.substr($value, 6, 2) . "/" . substr($value, 8, 2).'</td><td>&nbsp;'. $spiele_tmp = $inhalt .'&nbsp;</td>';
-          }
+        // Einzelne Saisons aufbereiten
+        foreach ($gesamt[$name] as $value => $inhalt) {
+            if (($value != 'gesamt_spiele') and ($value != 'gesamt_punkte')) {
+                if (++$ungerade == 1) {
+                    // Spiele
+                    if ($value == 'spielexxyy') {
+                        $spiele_tmp = $inhalt;
+                        $ausgabe .= '<tr><td><acronym title="Aktuelle Tippsaison (ist noch nicht beendet)">aktuell</acronym></td><td>&nbsp;'. $inhalt .'&nbsp;</td>';
+                    } else {
+                        $spiele_tmp = $inhalt;
+                        $ausgabe .= '<tr><td>'.substr($value, 6, 2) . '/' . substr($value, 8, 2).'</td><td>&nbsp;'. $inhalt .'&nbsp;</td>';
+                    }
+                } else {
+                    // Punkte
+                    $ausgabe .= '<td>&nbsp;';
+                    if ($spiele_tmp > 0) {
+                        $quo = round($inhalt / $spiele_tmp, 2);
+                        $ausgabe .= ($quo == '0.5' ? '0.50' : $quo);
+                    }
+                    $ausgabe .= '&nbsp;</td><td>&nbsp;'. $inhalt .'&nbsp;</td></tr>';
+                    $ungerade = 0;
+                }
+            }
         }
-        else {
-          // Punkte
-          $ausgabe .= '<td>&nbsp;';
-          if($spiele_tmp > 0) {
-            $quo = round($inhalt/$spiele_tmp, 2);
-            $ausgabe .= ($quo == "0.5" ? "0.50" : $quo);
-          }
-          $ausgabe .= '&nbsp;</td><td>&nbsp;'. $inhalt .'&nbsp;</td></tr>';
-          $ungerade = 0;
-        }
-      }
-    }
 
-    $ausgabe .=  '</table>
+        $ausgabe .=  '</table>
   </td></tr>';
 
-  }  // if shownichttipper end
+    }  // if shownichttipper end
 } //foreach Ausgabe aufbereiten end
 
-$ausgabe .=  "</table>";
+$ausgabe .=  '</table>';
 
 unset($spiele);
 unset($punkte);
@@ -451,6 +484,7 @@ $htmlhead = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
  <title>'.$title.'</title>
 <style type="text/css">
 body {
@@ -571,10 +605,7 @@ div.info {
 </style>
 
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
-<!--
-<script type="text/javascript" src="../js/jquery.min.js"></script>
--->
+<script type="text/javascript" src="'.URL_TO_JSDIR.'/jquery.min.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -626,7 +657,7 @@ div.info {
         $(id).removeClass("toshow");
         $(id).addClass("hide");
         //$(sh_id).hide();
-        $(sh_id).attr("src", "img/weniger1.png");
+        $(sh_id).attr("src", "'.URL_TO_IMGDIR.'/weniger1.png");
       }
       else {
         //$(id).hide();
@@ -685,20 +716,21 @@ $htmlbody .= $ausgabe;
 $htmlbody .= '<div class="zentriert info"><br />Bei dieser Auswertung wurden ' . sizeof($gesamtfiles) . ' Saisons zusammengefasst:<br />';
 
 $i = 0;
-foreach($gesamtfiles as $value) {
-  if(($aktuelle_saison_einbinden == 1) and ($i+1 == count($gesamtfiles))) {
-    $htmlbody .= "aktuell";  //substr($value, 6, 2) . "/" . substr($value, 8, 2);
-  }
-  else {
-    $htmlbody .= substr($value, 6, 2) . "/" . substr($value, 8, 2);
-    if(++$i<sizeof($gesamtfiles)) { $htmlbody .= ", "; }
-  }
+foreach ($gesamtfiles as $value) {
+    if (($aktuelle_saison_einbinden == 1) and ($i + 1 == count($gesamtfiles))) {
+        $htmlbody .= 'aktuell';  //substr($value, 6, 2) . "/" . substr($value, 8, 2);
+    } else {
+        $htmlbody .= substr($value, 6, 2) . '/' . substr($value, 8, 2);
+        if (++$i < sizeof($gesamtfiles)) {
+            $htmlbody .= ', ';
+        }
+    }
 }
 
 $htmlbody .= '<br />Eine laufende Saison wird erst nach deren Ende ins Archiv aufgenommen.';
 
-if($shownichttipper == 0) {
-  $htmlbody .= '<br />Tippspieler, die keinen Tipp abgegeben haben, werden nicht angezeigt.';
+if ($shownichttipper == 0) {
+    $htmlbody .= '<br />Tippspieler, die keinen Tipp abgegeben haben, werden nicht angezeigt.';
 }
 
 $htmlbody .= '</div>';
@@ -711,5 +743,3 @@ $htmlbody .= '</div>';
 echo $htmlhead . $htmlbody . $htmlfoot;
 
 clearstatcache();
-
-?>
